@@ -1,0 +1,26 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  web:
+    container_name: api-server-1
+    image: fastapi
+    ports:
+      - "8000:80"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_QUEUE=${REDIS_QUEUE}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+
+  worker:
+    container_name: worker-1
+    image: redis-worker
+    depends_on:
+      - redis
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}

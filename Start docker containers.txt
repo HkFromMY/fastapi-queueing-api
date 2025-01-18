@@ -1,0 +1,16 @@
+### network 
+docker network create queue-api
+
+### Redis server
+docker run -d --name redis -p 6379:6379 --network queue-api redis:latest
+
+### worker
+docker build -t redis-worker -f Dockerfile_rq .
+docker run -d --name worker-1 --network queue-api redis-worker
+
+### worker with mounted volume for easy shyet
+docker run -d --name worker-1 --network queue-api -v "C:\Users\Usrer\Desktop\Queueing System API\Redis\fastapi-rq-docker":/code redis-worker
+
+### fastapi
+docker build -t fastapi -f Dockerfile_fastapi .
+docker run -d --name api-server-1 --network queue-api -p 8000:80 fastapi
